@@ -1,19 +1,12 @@
-import { ipcRenderer } from "electron";
 import { Task, UpdateTask } from "./interface";
 
 // サーバー側のエンドポイント
 const API_URL = 'http://localhost:3001';
 
-// Electronを使用しているか
-// let isElectron = window.require && !!window.require('electron')
-const isElectron = typeof window !== 'undefined' && window.process && window.process.type;
-// let isIpcRenderer = window.require('electron').ipcRenderer
-console.log("isElectron", isElectron)
-
 // データをバックエンドから取得するための関数
 export const fetchGetTaskData = async () => {
     try {
-        if (isElectron) {
+        if (window.api && window.api.isElectron()) {
 
         } else {
             const response = await fetch(`${API_URL}/readfile`, {
@@ -39,7 +32,7 @@ export const fetchGetTaskData = async () => {
 // データをバックエンドに送信するための関数（例）
 export const fetchSetTaskData = async (data: any) => {
     try {
-        if (isElectron) {
+        if (window.api && window.api.isElectron()) {
 
         } else {
             const jsonString = JSON.stringify(data.payload)
@@ -70,17 +63,15 @@ export const fetchSetTaskData = async (data: any) => {
 // データをバックエンドから取得するための関数
 export const fetchGetTask = async () => {
     try {
-        if (isElectron) {
-            // ipcRenderer.send('gettask')
-            // return new Promise((resolve, reject) => {
-            //     ipcRenderer.once('gettask-response', (_, response) => {
-            //         if (response.success) {
-            //             resolve(response.data)
-            //         } else {
-            //             reject(new Error(response.error))
-            //         }
-            //     })
-            // })
+        // console.log("isElectron", window.electronEnvironment, window.electronEnvironment.isElectron())
+        if (window.api && window.api.isElectron()) {
+            const result = await window.api.invoke('get-task');
+            console.log(result)
+            if (result) {
+                return result;
+            } else {
+                throw new Error(result.error);
+            }
         } else {
             const response = await fetch(`${API_URL}/gettask`, {
                 method: 'GET',
@@ -101,8 +92,15 @@ export const fetchGetTask = async () => {
 // 
 export const fetchAddTask = async (task: Task) => {
     try {
-        if (isElectron) {
-
+        // console.log("isElectron", window.electronEnvironment, window.electronEnvironment.isElectron())
+        if (window.api && window.api.isElectron()) {
+            const result = await window.api.invoke('add-task', task);
+            console.log(result)
+            if (result) {
+                return result;
+            } else {
+                throw new Error(result.error);
+            }
         } else {
             const jsonString = JSON.stringify(task)
             console.log(jsonString)
@@ -129,8 +127,14 @@ export const fetchAddTask = async (task: Task) => {
 
 export const fetchUpdateTask = async (task: UpdateTask) => {
     try {
-        if (isElectron) {
-
+        if (window.api && window.api.isElectron()) {
+            const result = await window.api.invoke('update-task', task);
+            console.log(result)
+            if (result) {
+                return result;
+            } else {
+                throw new Error(result.error);
+            }
         } else {
             const jsonString = JSON.stringify(task)
             console.log("jsonString", jsonString)
@@ -159,8 +163,8 @@ export const fetchUpdateTask = async (task: UpdateTask) => {
 
 export const fetchDeleteTask = async (taskId: number) => {
     try {
-        if (isElectron) {
-
+        if (window.api && window.api.isElectron()) {
+            await window.api.invoke('delete-task', taskId);
         } else {
             const jsonString = JSON.stringify({ taskId })
             console.log(jsonString)
@@ -189,7 +193,8 @@ export const fetchDeleteTask = async (taskId: number) => {
 
 export const fetchInitialProcess = async () => {
     try {
-        if (isElectron) {
+        if (window.api && window.api.isElectron()) {
+            await window.api.invoke('initial');
 
         } else {
             const response = await fetch(`${API_URL}/initial`, {

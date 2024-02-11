@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from 'react';
 import './App.css';
 import { Button, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material';
@@ -260,10 +261,13 @@ function App() {
   }, [isTextFocus])
 
   useEffect(() => {
+    console.log("mount")
+    // console.log(electronEnvironment.isElectron())
+    // console.log(window.electronEnvironment)
+    // console.log(window.electronEnvironment.isElectron())
     // マウント時呼び出す
     dispatch(fetchInitialProcessRequest())
     dispatch(fetchGetTaskRequest())
-    console.log("mount")
   }, [])
 
   return (

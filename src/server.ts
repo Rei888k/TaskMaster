@@ -1,8 +1,9 @@
-import express = require('express');
+// import express = require('express');
+import express from 'express'
 import { Request, Response } from 'express';
 import * as fs from 'fs'
-// import cors from "cors";
-import cors = require('cors')
+import cors from "cors";
+// import cors = require('cors')
 import { v4 as uuidv4 } from 'uuid';
 import { getTask, initDatabase, addTask, updateTask, deleteTask } from './db';
 import { Task, UpdateTask } from './interface';

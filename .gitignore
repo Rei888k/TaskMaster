@@ -23,3 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 /タスク管理アプリ-win32-x64
+/dist

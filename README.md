@@ -84,3 +84,12 @@ npx nodemon src/server.ts
 
 corsインストール
 npm install @types/cors cors --legacy-peer-deps
+
+
+Electron使用
+
+ビルド
+npm run build
+
+Electron起動
+npm run electron-start
