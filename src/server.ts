@@ -7,6 +7,7 @@ import cors from "cors";
 import { v4 as uuidv4 } from 'uuid';
 import { getTask, initDatabase, addTask, updateTask, deleteTask } from './db';
 import { Task, UpdateTask } from './interface';
+import { logger } from './logger';
 const app = express();
 const cookieParser = require('cookie-parser');
 
@@ -75,6 +76,11 @@ app.post('/writefile', (req: Request, res: Response) => {
 // タスク取得
 app.get('/gettask', (req: Request, res: Response) => {
     res.set({ 'Access-Control-Allow-Origin': 'http://localhost:3000' });
+    logger.debug("aaaa")
+    logger.info("aaaa")
+    logger.warn("aaaa")
+    logger.error("aaaa")
+    logger.fatal("aaaa")
     try {
         getTask().then((tasks: Task[] | null) => {
             // console.log(tasks)
@@ -145,8 +151,17 @@ app.delete('/deletetask', (req: Request, res: Response) => {
 // アプリ初期処理
 app.get('/initial', (req: Request, res: Response) => {
     try {
-        initDatabase()
-        res.status(200).send('successfully')
+        logger.debug("aaaa")
+        logger.info("aaaa")
+        logger.warn("aaaa")
+        logger.error("aaaa")
+        logger.fatal("aaaa")
+        initDatabase().then((tasks: Task[] | null) => {
+            res.json(tasks)
+        }).catch((error) => {
+            console.error(error)
+            res.status(500).send('Error reading file');
+        })
     } catch (error) {
         console.error(error)
         res.status(500).send("初期処理エラー")

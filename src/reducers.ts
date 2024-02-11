@@ -40,26 +40,6 @@ const buttonClickReducer = (state = initialState, action: { type: any; value: st
                 loading: false,
                 message: '保存が失敗しました。'
             }
-        // case 'ADDBUTTON':
-        //     const newTask: Task = {
-        //         taskId: 0,
-        //         title: action.value,
-        //         memo: action.memo,
-        //         limitDate: action.date,
-        //         completionDate: null,
-        //         progressStatus: 0,
-        //         progressRate: 0,
-        //         registerDate: "",
-        //         updateDate: null,
-        //         isCompleted: false
-        //     }
-
-        //     enqueueSnackbar("タスク追加しました", { variant: "info", autoHideDuration: 5000 })
-        //     return {
-        //         ...state,
-        //         taskList: [...state.taskList, newTask],
-        //         calendar: null,
-        //     }
         // タスク更新
         case FETCH_UPDATETASK_REQUEST:
             allTask = [...state.taskList].map(task => {
@@ -96,50 +76,6 @@ const buttonClickReducer = (state = initialState, action: { type: any; value: st
                 ...state,
                 loading: false,
             }
-
-        // case 'UPDATETITLEBUTTON':
-        //     // 未完了タスク
-        //     notFinishedTaskList = [...state.taskList].map(task => {
-        //         if (task.taskId === action.taskId) {
-        //             return { ...task, taskName: action.value, taskMemo: action.memo } as Task
-        //         }
-        //         return { ...task } as Task
-        //     })
-
-        //     // 完了タスク
-        //     finishedTaskList = [...state.completedTaskList].map(task => {
-        //         if (task.taskId === action.taskId) {
-        //             return { ...task, taskName: action.value, taskMemo: action.memo } as Task
-        //         }
-        //         return { ...task } as Task
-        //     })
-        //     return {
-        //         ...state,
-        //         taskList: notFinishedTaskList,
-        //         completedTaskList: finishedTaskList
-        //     }
-        // case 'UPDATEDATEBUTTON':
-        //     // 未完了タスク
-        //     console.log(action.date)
-        //     notFinishedTaskList = [...state.taskList].map(task => {
-        //         if (task.taskId === action.taskId) {
-        //             return { ...task, taskDate: action.date } as Task
-        //         }
-        //         return { ...task } as Task
-        //     })
-
-        //     // 完了タスク
-        //     finishedTaskList = [...state.completedTaskList].map(task => {
-        //         if (task.taskId === action.taskId) {
-        //             return { ...task, taskDate: action.date } as Task
-        //         }
-        //         return { ...task } as Task
-        //     })
-        //     return {
-        //         ...state,
-        //         taskList: notFinishedTaskList,
-        //         completedTaskList: finishedTaskList
-        //     }
         // タスク削除
         case FETCH_DELETETASK_REQUEST:
             return {
@@ -157,55 +93,6 @@ const buttonClickReducer = (state = initialState, action: { type: any; value: st
                 ...state,
                 loading: false,
             }
-        // case 'DELETEBUTTON':
-        //     // 削除ボタンが押下されたタスクID以外を抽出
-        //     // 未完了タスク
-        //     notFinishedTaskList = [...state.taskList].filter((task) => task.taskId !== action.taskId)
-
-        //     // 完了タスク
-        //     // finishedTaskList = [...state.completedTaskList].filter((task) => task.taskId !== action.taskId)
-
-        //     return {
-        //         ...state,
-        //         taskList: notFinishedTaskList,
-        //         completedTaskList: finishedTaskList
-        //     }
-        // case 'COMPLETEBUTTON':
-        //     // タスクリストから削除
-
-        //     // タスクの状態更新
-        //     allTask = [...state.taskList].map((task) => {
-        //         if (task.taskId === action.taskId) {
-        //             return { ...task, taskDate: action.date, isCompleted: true }
-        //         }
-        //         return task
-        //     })
-        //     // 未完了、完了タスクをまとめる
-        //     // allTask = [...allTask, ...state.completedTaskList]
-
-        //     return {
-        //         ...state,
-        //         taskList: [...allTask].filter((task) => !task.isCompleted),
-        //         completedTaskList: [...allTask].filter((task) => task.isCompleted)
-        //     }
-        // case 'BACKBUTTON':
-        //     // 完了タスクリストから削除
-
-        //     // タスクの状態更新
-        //     // allTask = [...state.completedTaskList].map((task) => {
-        //     //     if (task.taskId === action.taskId) {
-        //     //         return { ...task, taskDate: action.date, isCompleted: false }
-        //     //     }
-        //     //     return task
-        //     // })
-        //     // 未完了、完了タスクをまとめる
-        //     allTask = [...allTask, ...state.taskList]
-
-        //     return {
-        //         ...state,
-        //         taskList: [...allTask].filter((task) => !task.isCompleted),
-        //         completedTaskList: [...allTask].filter((task) => task.isCompleted)
-        //     }
         // case FETCH_READFILE_REQUEST:
         //     return {
         //         ...state,
@@ -296,9 +183,9 @@ const buttonClickReducer = (state = initialState, action: { type: any; value: st
             }
         case FETCH_GETTASK_SUCCESS:
             enqueueSnackbar("読込が完了しました", { variant: "success", autoHideDuration: 3000 })
-            action.taskList.map((task) => {
-                console.log(task.taskId)
-            })
+            // action.taskList.map((task) => {
+            //     console.log(task.taskId)
+            // })
             return {
                 ...state,
                 taskList: action.taskList,

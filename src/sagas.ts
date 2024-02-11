@@ -1,38 +1,39 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { FETCH_ADDTASK_REQUEST, FETCH_ADDTASK_SUCCESS, FETCH_DELETETASK_REQUEST, FETCH_DELETETASK_SUCCESS, FETCH_GETTASK_REQUEST, FETCH_GETTASK_SUCCESS, FETCH_INITIAL_REQUEST, FETCH_UPDATETASK_REQUEST, FetchAddTaskRequestAction, FetchAddTaskSuccessAction, FetchDeleteTaskRequestAction, FetchDeleteTaskSuccesstAction, FetchGetTaskSuccessAction, FetchUpdateTaskRequestAction, fetchAddTaskFailure, fetchAddTaskSuccess, fetchDeleteTaskFailure, fetchDeleteTaskSuccess, fetchGetTaskFailure, fetchGetTaskSuccess, fetchInitialProcessFailure, fetchInitialProcessSuccess, fetchReadFileFailure, fetchReadFileSuccess, fetchUpdateTaskFailure, fetchUpdateTaskSuccess, fetchWriteFileFailure, fetchWriteFileSuccess } from './actions';
-import { fetchAddTask, fetchDeleteTask, fetchGetTask, fetchGetTaskData, fetchInitialProcess, fetchSetTaskData, fetchUpdateTask } from './api';
+import { FETCH_ADDTASK_REQUEST, FETCH_ADDTASK_SUCCESS, FETCH_DELETETASK_REQUEST, FETCH_DELETETASK_SUCCESS, FETCH_GETTASK_REQUEST, FETCH_GETTASK_SUCCESS, FETCH_INITIAL_REQUEST, FETCH_INITIAL_SUCCESS, FETCH_UPDATETASK_REQUEST, FetchAddTaskRequestAction, FetchAddTaskSuccessAction, FetchDeleteTaskRequestAction, FetchDeleteTaskSuccesstAction, FetchGetTaskSuccessAction, FetchInitialSuccessAction, FetchUpdateTaskRequestAction, fetchAddTaskFailure, fetchAddTaskSuccess, fetchDeleteTaskFailure, fetchDeleteTaskSuccess, fetchGetTaskFailure, fetchGetTaskSuccess, fetchInitialProcessFailure, fetchInitialProcessSuccess, fetchUpdateTaskFailure, fetchUpdateTaskSuccess } from './actions';
+import { fetchAddTask, fetchDeleteTask, fetchGetTask, fetchInitialProcess, fetchUpdateTask } from './api';
 import { Task, UpdateTask } from './interface';
 
-function* fetchReadFileSaga() {
-    try {
-        const { payload, error } = yield call(fetchGetTaskData)
-        console.log(payload)
-        yield put(fetchReadFileSuccess({ type: 'FETCH_READFILE_SUCCESS', payload: payload }))
-    } catch (error) {
-        console.log(error)
-        yield put(fetchReadFileFailure({ type: 'FETCH_READFILE_FAILURE' }))
-    }
-}
+// function* fetchReadFileSaga() {
+//     try {
+//         const { payload, error } = yield call(fetchGetTaskData)
+//         console.log(payload)
+//         yield put(fetchReadFileSuccess({ type: 'FETCH_READFILE_SUCCESS', payload: payload }))
+//     } catch (error) {
+//         console.log(error)
+//         yield put(fetchReadFileFailure({ type: 'FETCH_READFILE_FAILURE' }))
+//     }
+// }
 
-function* fetchWriteFileSaga(action: any) {
-    try {
+// function* fetchWriteFileSaga(action: any) {
+//     try {
 
-        console.log(action)
-        const { payload, error } = yield call(fetchSetTaskData, action.payload)
-        console.log(payload)
-        yield put(fetchWriteFileSuccess({ type: 'FETCH_WRITEFILE_SUCCESS', payload: payload }))
-    } catch (error) {
-        console.log(error)
-        yield put(fetchWriteFileFailure({ type: 'FETCH_WRITEFILE_FAILURE' }))
-    }
+//         console.log(action)
+//         const { payload, error } = yield call(fetchSetTaskData, action.payload)
+//         console.log(payload)
+//         yield put(fetchWriteFileSuccess({ type: 'FETCH_WRITEFILE_SUCCESS', payload: payload }))
+//     } catch (error) {
+//         console.log(error)
+//         yield put(fetchWriteFileFailure({ type: 'FETCH_WRITEFILE_FAILURE' }))
+//     }
 
-}
+// }
 
 // アプリ初期処理
 function* fetchInitialProcessSaga() {
     try {
-        yield call(fetchInitialProcess)
-        yield put(fetchInitialProcessSuccess())
+        const taskList: Task[] = yield call(fetchInitialProcess)
+        yield put(fetchInitialProcessSuccess({ type: FETCH_INITIAL_SUCCESS, taskList: taskList } as FetchInitialSuccessAction ))
+        console.log("初期処理完了")
     } catch (error) {
         console.log(error)
         yield put(fetchInitialProcessFailure())
@@ -92,8 +93,8 @@ function* fetchDeleteTaskSaga(action: FetchDeleteTaskRequestAction) {
 }
 
 export default function* rootSaga() {
-    yield takeEvery('FETCH_READFILE_REQUEST', fetchReadFileSaga)
-    yield takeEvery('FETCH_WRITEFILE_REQUEST', fetchWriteFileSaga)
+    // yield takeEvery('FETCH_READFILE_REQUEST', fetchReadFileSaga)
+    // yield takeEvery('FETCH_WRITEFILE_REQUEST', fetchWriteFileSaga)
     yield takeEvery(FETCH_INITIAL_REQUEST, fetchInitialProcessSaga)
     yield takeEvery(FETCH_GETTASK_REQUEST, fetchGetTaskSaga)
     yield takeEvery(FETCH_ADDTASK_REQUEST, fetchAddTaskSaga)

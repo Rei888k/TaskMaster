@@ -2,12 +2,15 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 import { addTask, deleteTask, getTask, initDatabase, updateTask } from '../src/db'
 import { Task, UpdateTask } from '../src/interface'
+import { logger } from '../src/logger';
+
 
 // __dirname = file:///C:/work/typescript/TaskMaster/public/
 function createWindow() {
     console.log(__dirname)
     console.log(path.join(__dirname, 'preload.js'))
     console.log(path.join(__dirname, '../build/index.html'))
+    // console.log(app.getPath('userData'))
     // ブラウザウィンドウを作成する。
     let win = new BrowserWindow({
         width: 800,
@@ -38,8 +41,17 @@ app.whenReady().then(() => {
     ipcMain.handle('initial', async () => {
         return new Promise<void>((resolve, reject) => {
             try {
-                initDatabase()
-                resolve()
+                logger.debug("aaaa")
+                logger.info("aaaa")
+                logger.warn("aaaa")
+                logger.error("aaaa")
+                logger.fatal("aaaa")
+        
+                console.log("initial")
+                initDatabase().then(() => {
+                    console.log("init")
+                    resolve()
+                })
             } catch (error) {
                 reject()
             }

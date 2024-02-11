@@ -22,6 +22,7 @@
   },
   "include": [
     "electron/**/*.ts",
+    "src/global.d.ts"
     // "src/IPCMain.ts",
     // "src/db.ts",
   ]

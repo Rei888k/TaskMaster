@@ -1,7 +1,7 @@
 import { Button, IconButton } from '@mui/material';
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { FETCH_DELETETASK_REQUEST, deleteButton, fetchDeleteTaskRequest } from './actions';
+import { FETCH_DELETETASK_REQUEST, fetchDeleteTaskRequest } from './actions';
 import { useDispatch } from 'react-redux';
 import DeleteIcon from '@mui/icons-material/Delete';
 

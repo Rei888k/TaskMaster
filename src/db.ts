@@ -1,22 +1,31 @@
 import sqlite3 from 'sqlite3';
 import fs from 'fs'
 import { Task, UpdateTask } from './interface';
+import { app } from 'electron';
+import { promises as fsPromises } from 'fs';
 
 class Database {
     private db: sqlite3.Database | null = null;
-    private currentDir = process.cwd()
-
+    private initSqlPath = process.cwd()
+    private dbPath = (typeof process !== 'undefined' && process.versions && !!process.versions.electron) ? app.getPath('userData') : process.cwd()
+    // private currentDir2 = window.api && window.api.isElectron() ? app.getPath('userData') : process.cwd()
+    
     open(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.db = new sqlite3.Database(this.currentDir + '/db/database.db', (err) => {
-                if (err) {
-                    console.error('Error opening database', err);
-                    reject(err);
-                } else {
-                    console.log('Database opened');
-                    resolve();
-                }
-            });
+            console.log("this.currentDir2", this.dbPath)
+            // dbフォルダ作成
+            fsPromises.mkdir(this.dbPath + '/db', { recursive: true }).then(() => {
+                this.db = new sqlite3.Database(this.dbPath + '/db/database.db', (err) => {
+                    if (err) {
+                        console.error('Error opening database', err);
+                        reject(err);
+                    } else {
+                        console.log('Database opened');
+                        resolve();
+                    }
+                });    
+            })
+
         });
     }
     close(): Promise<void> {
@@ -41,7 +50,8 @@ class Database {
             if (this.db) {
                 // テーブル作成
                 // SQLファイルの読み込みと実行
-                fs.readFile(this.currentDir + '/db/init.sql', 'utf8', (err, data) => {
+                console.log("this.currentDir", this.initSqlPath)
+                fs.readFile(this.initSqlPath + '/db/init.sql', 'utf8', (err, data) => {
                     if (err) {
                         console.error(err.message);
                         reject(err)
@@ -117,15 +127,19 @@ class Database {
 // DB初期化
 export async function initDatabase() {
     console.log("currentDir", process.cwd())
-
+    // console.log(window.api && window.api.isElectron() ? app.getPath('userData') : process.cwd())
     const db = new Database()
     try {
         await db.open()
 
         await db.init()
 
+        const tasks: Task[] = await db.all('select * from task')
+
+        return tasks
     } catch (error) {
         console.error("DB error", error)
+        return null
     } finally {
         await db.close()
     }

@@ -1,13 +1,13 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import './App.css';
-import { Button, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material';
+import { Button, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { ja } from 'date-fns/locale';
 import { useDispatch } from 'react-redux';
-import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, addButton, backButton, completeButton, fetchAddTaskRequest, fetchGetTaskRequest, fetchInitialProcessRequest, fetchReadFileRequest, fetchUpdateTaskRequest, fetchWriteFileRequest, updateTitleButton } from './actions';
+import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, fetchAddTaskRequest, fetchGetTaskRequest, fetchInitialProcessRequest, fetchUpdateTaskRequest } from './actions';
 import { useSelector } from './store';
 import ConfirmModal from './ConfirmModal';
 import { Task, UpdateTask } from './interface';
@@ -54,7 +54,6 @@ function App() {
   const [inputValueForUpdate, setInputValueForUpdate] = useState<string>("")
   const [inputMemoValueForUpdate, setInputMemoValueForUpdate] = useState<string | null>("")
   const [editTitleState, setEditTitleState] = useState<EditState>({ id: NaN, isEditting: false })
-  const [errorMessage, setErrorMessage] = useState<string>("")
   const [taskOpen, setTaskOpen] = useState<boolean>(false)
   const [isTextFocus, setIsTextFocus] = useState({ taskField: false, memoField: false })
   // console.log("isTextFocus", isTextFocus)
@@ -66,7 +65,6 @@ function App() {
   const completedTaskList = allTaskList.filter(task => task.isCompleted )
   // const completedTaskList = useSelector(state => state.completedTaskList)
   const loading = useSelector(state => state.loading)
-  const message = useSelector(state => state.message)
   const calendar = useSelector(state => state.calendar)
 
 
@@ -111,50 +109,8 @@ function App() {
     // テキストフィールドをリセットする TODO
     setInputValue("")
     setInputMemoValue("")
-    setErrorMessage("")
     setTaskOpen(false)
   }
-
-  // // 保存ボタン押下
-  // const handleOnSaveClick = () => {
-  //   // タスクをJSON形式で定義する
-
-  //   // // 未完了タスク
-  //   let task: Task[] = []
-
-  //   taskList.forEach(tmpTask => {
-  //     const saveTask: Task = {
-  //       taskId: tmpTask.taskId,
-  //       title: tmpTask.title,
-  //       memo: tmpTask.memo,
-  //       limitDate: tmpTask.limitDate,
-  //       completionDate: null,
-  //       progressStatus: 0,
-  //       progressRate: 0,
-  //       registerDate: "",
-  //       updateDate: null,
-  //       isCompleted: tmpTask.isCompleted
-  //     }
-  //     task = [...task, saveTask]
-  //   });
-  //   // completedTaskList.forEach(tmpCompTask => {
-  //   //   const compTask = {
-  //   //     taskId: tmpCompTask.taskId,
-  //   //     title: tmpCompTask.title,
-  //   //     memo: tmpCompTask.memo,
-  //   //     limitDate: tmpCompTask.limitDate,
-  //   //     completionDate: tmpCompTask.completionDate,
-  //   //     progressStatus: tmpCompTask.progressStatus,
-  //   //     progressRate: tmpCompTask.progressRate,
-  //   //     registerDate: tmpCompTask.registerDate,
-  //   //     updateDate: tmpCompTask.updateDate,
-  //   //     isCompleted: tmpCompTask.isCompleted
-  //   //   }
-  //   //   task = [...task, compTask]
-  //   // })
-  //   // dispatch(fetchWriteFileRequest({ payload: task }))
-  //   dispatch(fetchAddTaskRequest({ type: FETCH_ADDTASK_REQUEST, addTask: task[0] }))
-  // }
 
   // 編集ボタン押下
   const handleOnEditTitleClick = (id: number) => {
@@ -166,26 +122,10 @@ function App() {
       setInputMemoValueForUpdate(task.memo)
       return
     }
-
-    // 完了タスク
-    // const completedTask = completedTaskList.find((task) => task.taskId === id)
-    // if (completedTask) {
-    //   setInputValueForUpdate(completedTask.title)
-    //   setInputMemoValueForUpdate(completedTask.memo)
-    //   return
-    // }
   }
 
   // 更新ボタン押下
   const handleOnUpdateTitleClick = (id: number) => {
-    // 未入力の場合はエラー
-    // if (inputValueForUpdate === '') {
-    //   if (errorMessage === '') {
-    //     setErrorMessage("未入力です")
-    //   }
-    //   return
-    // }
-
     const task: UpdateTask = {
       taskId: id,
       title: inputValueForUpdate,
@@ -195,7 +135,6 @@ function App() {
       updateDate: getCurrentTime()
     }    
     dispatch(fetchUpdateTaskRequest({ type: FETCH_UPDATETASK_REQUEST, updateTask: task }))
-    // dispatch(updateTitleButton(id, inputValueForUpdate, inputMemoValueForUpdate))
     setEditTitleState({ id: NaN, isEditting: false })
   }
 
@@ -262,13 +201,11 @@ function App() {
 
   useEffect(() => {
     console.log("mount")
-    // console.log(electronEnvironment.isElectron())
-    // console.log(window.electronEnvironment)
-    // console.log(window.electronEnvironment.isElectron())
     // マウント時呼び出す
     dispatch(fetchInitialProcessRequest())
-    dispatch(fetchGetTaskRequest())
-  }, [])
+    // dispatch(fetchGetTaskRequest())
+    console.log("mouint finish")
+  }, [dispatch])
 
   return (
     <div className="App" style={rootStyle}>
@@ -497,17 +434,6 @@ function App() {
           </Table>
         </TableContainer>
       </Grid>
-      {/* 処理中に表示するメッセージ */}
-      {/* {loading ?
-        <Typography variant='h4' sx={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', backgroundColor: '#FFFFFF' }} className='fade-in'>
-          {message}
-        </Typography>
-        :
-        <></>
-        // <Typography variant='h4' sx={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', backgroundColor: '#FFFFFF' }} className='fade-out'>
-        //   {message}
-        // </Typography>
-      } */}
     </div>
   );
 }

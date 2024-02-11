@@ -93,3 +93,6 @@ npm run build
 
 Electron起動
 npm run electron-start
+
+Electron用のビルド
+npm run electron-build

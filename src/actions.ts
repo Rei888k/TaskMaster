@@ -9,8 +9,15 @@ export const FETCH_WRITEFILE_REQUEST = 'FETCH_WRITEFILE_REQUEST';
 export const FETCH_WRITEFILE_SUCCESS = 'FETCH_WRITEFILE_SUCCESS';
 export const FETCH_WRITEFILE_FAILURE = 'FETCH_WRITEFILE_FAILURE';
 
+// 初期処理
 export const FETCH_INITIAL_REQUEST = 'FETCH_INITIAL_REQUEST';
 export const FETCH_INITIAL_SUCCESS = 'FETCH_INITIAL_SUCCESS';
+export interface FetchInitialSuccessAction {
+    type: typeof FETCH_INITIAL_SUCCESS
+    taskList: Task[]
+}
+
+
 export const FETCH_INITIAL_FAILURE = 'FETCH_INITIAL_FAILURE';
 
 // タスク取得
@@ -22,7 +29,7 @@ export interface FetchGetTaskRequestAction {
 export const FETCH_GETTASK_SUCCESS = 'FETCH_GETTASK_SUCCESS'
 export interface FetchGetTaskSuccessAction {
     type: typeof FETCH_GETTASK_SUCCESS
-    taskList: Task[] | null
+    taskList: Task[]
 }
 
 export const FETCH_GETTASK_FAILURE = 'FETCH_GETTASK_FAILURE'
@@ -68,63 +75,6 @@ export interface FetchDeleteTaskSuccesstAction {
 }
 export const FETCH_DELETETASK_FAILURE = 'FETCH_DELETETASK_FAILURE'
 
-
-// 追加ボタン押下
-export const addButton = (value: string, memo: string | null, date: string | null) => {
-    return {
-        type: 'ADDBUTTON',
-        value,
-        memo,
-        date
-    }
-}
-// タイトル更新ボタン押下
-export const updateTitleButton = (id: number, value: string, memo: string | null) => {
-    return {
-        type: 'UPDATETITLEBUTTON',
-        taskId: id,
-        value,
-        memo
-    }
-}
-// 日付更新ボタン押下
-export const updateDateButton = (id: number, date: string | null) => {
-    return {
-        type: 'UPDATEDATEBUTTON',
-        taskId: id,
-        date
-    }
-}
-// 削除ボタン押下
-export const deleteButton = (id: number) => {
-    return {
-        type: 'DELETEBUTTON',
-        taskId: id,
-        value: ''
-    }
-}
-// 完了ボタン押下
-export const completeButton = (id: number, today: string) => {
-    return {
-        type: 'COMPLETEBUTTON',
-        taskId: id,
-        date: today
-    }
-}
-// 元に戻すボタン押下
-export const backButton = (id: number) => {
-    return {
-        type: 'BACKBUTTON',
-        taskId: id,
-        value: ''
-    }
-}
-// 保存ボタン押下
-export const saveButton = () => {
-    return {
-        type: 'SAVEBUTTON',
-    }
-}
 // 読込ボタン押下
 export const fetchReadFileRequest = () => {
     return {
@@ -178,9 +128,10 @@ export const fetchInitialProcessRequest = () => {
         type: FETCH_INITIAL_REQUEST
     }
 }
-export const fetchInitialProcessSuccess = () => {
+export const fetchInitialProcessSuccess = (data: FetchInitialSuccessAction) => {
     return {
-        type: FETCH_INITIAL_SUCCESS
+        type: FETCH_INITIAL_SUCCESS,
+        taskList: data.taskList
     }
 }
 export const fetchInitialProcessFailure = () => {

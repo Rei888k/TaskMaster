@@ -4,66 +4,65 @@ import { Task, UpdateTask } from "./interface";
 const API_URL = 'http://localhost:3001';
 
 // データをバックエンドから取得するための関数
-export const fetchGetTaskData = async () => {
-    try {
-        if (window.api && window.api.isElectron()) {
+// export const fetchGetTaskData = async () => {
+//     try {
+//         if (window.api && window.api.isElectron()) {
 
-        } else {
-            const response = await fetch(`${API_URL}/readfile`, {
-                method: 'GET',
-                credentials: 'include', // or include
-            })
+//         } else {
+//             const response = await fetch(`${API_URL}/readfile`, {
+//                 method: 'GET',
+//                 credentials: 'include', // or include
+//             })
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok.');
-            }
-            // console.log(response)
-            const payload = await response.json();
-            // const parseJson = JSON.parse(payload)
-            return { payload };
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok.');
+//             }
+//             // console.log(response)
+//             const payload = await response.json();
+//             // const parseJson = JSON.parse(payload)
+//             return { payload };
 
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-    }
-};
+//         }
+//     } catch (error) {
+//         console.error('Error fetching data:', error);
+//         throw error;
+//     }
+// };
 
 // データをバックエンドに送信するための関数（例）
-export const fetchSetTaskData = async (data: any) => {
-    try {
-        if (window.api && window.api.isElectron()) {
+// export const fetchSetTaskData = async (data: any) => {
+//     try {
+//         if (window.api && window.api.isElectron()) {
 
-        } else {
-            const jsonString = JSON.stringify(data.payload)
-            console.log(jsonString)
-            const response = await fetch(`${API_URL}/writefile`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: jsonString,
-                // credentials: 'same-origin',
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok.');
-            }
-            // const result = await response.json();
-            const result = await response.text();
-            return result;
+//         } else {
+//             const jsonString = JSON.stringify(data.payload)
+//             console.log(jsonString)
+//             const response = await fetch(`${API_URL}/writefile`, {
+//                 method: 'POST',
+//                 credentials: 'include',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: jsonString,
+//                 // credentials: 'same-origin',
+//             });
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok.');
+//             }
+//             // const result = await response.json();
+//             const result = await response.text();
+//             return result;
 
-        }
-    } catch (error) {
-        console.error('Error sending data:', error);
-        throw error;
-    }
-};
+//         }
+//     } catch (error) {
+//         console.error('Error sending data:', error);
+//         throw error;
+//     }
+// };
 
 // データをバックエンドから取得するための関数
 export const fetchGetTask = async () => {
     try {
-        // console.log("isElectron", window.electronEnvironment, window.electronEnvironment.isElectron())
         if (window.api && window.api.isElectron()) {
             const result = await window.api.invoke('get-task');
             console.log(result)
@@ -92,7 +91,6 @@ export const fetchGetTask = async () => {
 // 
 export const fetchAddTask = async (task: Task) => {
     try {
-        // console.log("isElectron", window.electronEnvironment, window.electronEnvironment.isElectron())
         if (window.api && window.api.isElectron()) {
             const result = await window.api.invoke('add-task', task);
             console.log(result)
@@ -204,6 +202,7 @@ export const fetchInitialProcess = async () => {
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
             }
+            return response.json()
         }
     } catch (error) {
         console.error(error)
