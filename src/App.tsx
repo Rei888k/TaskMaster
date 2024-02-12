@@ -62,8 +62,8 @@ function App() {
   const dispatch = useDispatch()
 
   const allTaskList = useSelector(state => state.taskList)
-  const taskList = allTaskList.filter(task => !task.isCompleted )
-  const completedTaskList = allTaskList.filter(task => task.isCompleted )
+  const taskList = typeof allTaskList === 'undefined' ? [] : allTaskList.filter(task => !task.isCompleted )
+  const completedTaskList = typeof allTaskList === 'undefined' ? [] : allTaskList.filter(task => task.isCompleted )
   // const completedTaskList = useSelector(state => state.completedTaskList)
   const loading = useSelector(state => state.loading)
   const calendar = useSelector(state => state.calendar)

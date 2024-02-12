@@ -46,7 +46,7 @@
     "eject": "react-scripts eject",
     "electron-build": "npx tsc && npm run build",
     "electron-start": "electron .",
-    "dist": "electron-packager . --overwrite"
+    "dist": "electron-packager . --overwrite --asar"
   },
   "build": {
     "appId": "com.example.yourapp",

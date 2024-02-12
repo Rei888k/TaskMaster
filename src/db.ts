@@ -5,6 +5,47 @@ import { app } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { logger } from './logger';
 
+const initSql = `
+-- タスクテーブル
+CREATE TABLE IF NOT EXISTS task (
+    taskId INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    memo TEXT,
+    limitDate TEXT,
+    isCompleted INTEGER, -- bool値
+    completionDate TEXT,
+    progressStatus INTEGER,
+    progressRate INTEGER,
+    registerDate TEXT,
+    updateDate TEXT
+);
+
+-- タスク詳細
+CREATE TABLE IF NOT EXISTS taskdetail (
+    detailId INTEGER,
+    FOREIGN KEY (detailId) REFERENCES task(taskId)
+);
+
+-- タスクコメント
+CREATE TABLE IF NOT EXISTS taskcomment (
+    taskCommentId INTEGER PRIMARY KEY AUTOINCREMENT,
+    taskId INTEGER,
+    comment TEXT,
+    registerDate TEXT,
+    updateDate TEXT,
+    FOREIGN KEY (taskId) REFERENCES taskdetail(detailId)
+);
+
+-- タグ名
+CREATE TABLE IF NOT EXISTS tag (
+    tagId INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL,
+    registerDate TEXT,
+    updateDate TEXT
+);
+
+`
+
 class Database {
     private db: sqlite3.Database | null = null;
     private initSqlPath = process.cwd()
@@ -48,12 +89,13 @@ class Database {
                 // テーブル作成
                 // SQLファイルの読み込みと実行
                 logger.info("init.sql file path", this.initSqlPath)
-                fs.readFile(this.initSqlPath + '/db/init.sql', 'utf8', (err, data) => {
-                    if (err) {
-                        logger.error(err)
-                        reject(err)
-                    }
-                    this.db!.exec(data, (err) => {
+                // fs.readFile(this.initSqlPath + '/db/init.sql', 'utf8', (err, data) => {
+                //     if (err) {
+                //         logger.error(err)
+                //         reject(err)
+                //     }
+                    // init.sqlファイルからではなく、変数からテーブルを作成する
+                    this.db!.exec(initSql, (err) => {
                         if (err) {
                             logger.error(err.message)
                             reject(err)
@@ -62,7 +104,7 @@ class Database {
                             resolve();
                         }
                     });
-                });
+                // });
             } else {
                 reject()
             }
