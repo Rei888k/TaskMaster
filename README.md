@@ -1,98 +1,36 @@
-# Getting Started with Create React App
+# README
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
-
-In the project directory, you can run:
+## 使い方
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+開発モードでフロントエンド側のWebアプリケーションの起動
+ブラウザで表示するにはhttp://localhost:3000/を開く
+実行中にソースコードに変更を加えるとページのリロードが発生します
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### `npx tsc src/server.ts`
 
-### `npm test`
+バックエンド側のソースコードをトランスパイル（TypeScriptからJavaScriptへの変換）します
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### `npx nodemon src/server.ts`
 
-### `npm run build`
+バックエンド側の起動
+port:3001を使用します
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `npm run electron-build`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Electron起動に必要なソースのビルドを行う
+ビルド完了後、/dist配下にトランスパイル（TypeScriptからJavaScriptへの変換）された.jsファイルが生成されます
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `npm run electron-start`
 
-### `npm run eject`
+開発モードでElectronによるデスクトップアプリケーションが起動します
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-フロントエンド起動
-npm start
-
-ビルド
-npm run build
-
-Electron起動
-npm run electron-start
-
-バックエンド起動
-npx tsc src/server.ts
-npx nodemon src/server.ts
+## 開発用MEMO
 
 corsインストール
 npm install @types/cors cors --legacy-peer-deps
 
-
-Electron使用
-
-ビルド
-npm run build
-
-Electron起動
-npm run electron-start
-
-Electron用のビルド
-npm run electron-build
+## リリース済みのアプリはこちら
+https://github.com/Rei888k/TaskMaster/releases
