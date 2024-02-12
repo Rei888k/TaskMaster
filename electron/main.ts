@@ -39,20 +39,16 @@ app.whenReady().then(() => {
     createWindow()
 
     ipcMain.handle('initial', async () => {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             try {
-                logger.debug("aaaa")
-                logger.info("aaaa")
-                logger.warn("aaaa")
-                logger.error("aaaa")
-                logger.fatal("aaaa")
-        
-                console.log("initial")
-                initDatabase().then(() => {
-                    console.log("init")
-                    resolve()
+                initDatabase().then((tasks: Task[] | null) => {
+                    resolve(tasks)
+                }).catch((error) => {
+                    logger.error("initial", error.message)
+                    reject()
                 })
             } catch (error) {
+                logger.error("initial", error)
                 reject()
             }
         })
@@ -62,15 +58,14 @@ app.whenReady().then(() => {
         return new Promise((resolve, reject) => {
             try {
                 getTask().then((tasks: Task[] | null) => {
-                    console.log("main.ts task")
-                    console.log(tasks)
                     resolve(tasks)
 
                 }).catch((error) => {
-                    console.error(error)
+                    logger.error("get-task", error.message)
                     reject(error.message)
                 })
             } catch (error) {
+                logger.error("get-task", error)
                 reject(error)
             }
         })
@@ -82,11 +77,11 @@ app.whenReady().then(() => {
                 addTask(task).then((task) => {
                     resolve(task)
                 }).catch((error) => {
-                    console.error(error)
+                    logger.error("add-task", error.message)
                     reject(error.message)
                 })
             } catch (error) {
-                console.log("error", error)
+                logger.error("add-task", error)
                 reject(error)
             }
         })
@@ -98,9 +93,11 @@ app.whenReady().then(() => {
                 updateTask(task).then(() => {
                     resolve(task)
                 }).catch((error) => {
+                    logger.error("update-task", error.message)
                     reject(error.message)
                 })
             } catch (error) {
+                logger.error("update-task", error)
                 reject(error)
             }
         })
@@ -112,9 +109,11 @@ app.whenReady().then(() => {
                 deleteTask(taskId).then(() => {
                     resolve()
                 }).catch((error) => {
+                    logger.error("delete-task", error.message)
                     reject()
                 })
             } catch (error) {
+                logger.error("delete-task", error)
                 reject()
             }
         })

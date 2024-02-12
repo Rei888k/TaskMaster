@@ -161,7 +161,6 @@ export const fetchGetTaskFailure = () => {
 
 // タスク追加
 export const fetchAddTaskRequest = (data: FetchAddTaskRequestAction) => {
-    console.log(data.addTask)
     return {
         type: FETCH_ADDTASK_REQUEST,
         addTask: data.addTask

@@ -1,4 +1,4 @@
-import { FETCH_ADDTASK_FAILURE, FETCH_ADDTASK_REQUEST, FETCH_ADDTASK_SUCCESS, FETCH_DELETETASK_FAILURE, FETCH_DELETETASK_REQUEST, FETCH_DELETETASK_SUCCESS, FETCH_GETTASK_FAILURE, FETCH_GETTASK_REQUEST, FETCH_GETTASK_SUCCESS, FETCH_UPDATETASK_FAILURE, FETCH_UPDATETASK_REQUEST, FETCH_UPDATETASK_SUCCESS, } from './actions';
+import { FETCH_ADDTASK_FAILURE, FETCH_ADDTASK_REQUEST, FETCH_ADDTASK_SUCCESS, FETCH_DELETETASK_FAILURE, FETCH_DELETETASK_REQUEST, FETCH_DELETETASK_SUCCESS, FETCH_GETTASK_FAILURE, FETCH_GETTASK_REQUEST, FETCH_GETTASK_SUCCESS, FETCH_INITIAL_FAILURE, FETCH_INITIAL_REQUEST, FETCH_INITIAL_SUCCESS, FETCH_UPDATETASK_FAILURE, FETCH_UPDATETASK_REQUEST, FETCH_UPDATETASK_SUCCESS, } from './actions';
 import { enqueueSnackbar } from 'notistack';
 import { Task, UpdateTask } from './interface';
 
@@ -193,6 +193,27 @@ const buttonClickReducer = (state = initialState, action: { type: any; value: st
                 message: '読込が完了しました。'
             }
         case FETCH_GETTASK_FAILURE:
+            enqueueSnackbar("読込が失敗しました", { variant: "error", autoHideDuration: null })
+            return {
+                ...state,
+                loading: false,
+                message: '読込が失敗しました。'
+            }
+        case FETCH_INITIAL_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                message: '読込中です'
+            }
+        case FETCH_INITIAL_SUCCESS:
+            enqueueSnackbar("読込が完了しました", { variant: "success", autoHideDuration: 3000 })
+            return {
+                ...state,
+                taskList: action.taskList,
+                loading: false,
+                message: '読込が完了しました。'
+            }
+        case FETCH_INITIAL_FAILURE:
             enqueueSnackbar("読込が失敗しました", { variant: "error", autoHideDuration: null })
             return {
                 ...state,

@@ -3,29 +3,27 @@ import fs from 'fs'
 import { Task, UpdateTask } from './interface';
 import { app } from 'electron';
 import { promises as fsPromises } from 'fs';
+import { logger } from './logger';
 
 class Database {
     private db: sqlite3.Database | null = null;
     private initSqlPath = process.cwd()
     private dbPath = (typeof process !== 'undefined' && process.versions && !!process.versions.electron) ? app.getPath('userData') : process.cwd()
-    // private currentDir2 = window.api && window.api.isElectron() ? app.getPath('userData') : process.cwd()
     
     open(): Promise<void> {
         return new Promise((resolve, reject) => {
-            console.log("this.currentDir2", this.dbPath)
+            logger.info("db file path", this.dbPath)
             // dbフォルダ作成
             fsPromises.mkdir(this.dbPath + '/db', { recursive: true }).then(() => {
                 this.db = new sqlite3.Database(this.dbPath + '/db/database.db', (err) => {
                     if (err) {
-                        console.error('Error opening database', err);
+                        logger.error('Error opening database', err)
                         reject(err);
                     } else {
-                        console.log('Database opened');
                         resolve();
                     }
                 });    
             })
-
         });
     }
     close(): Promise<void> {
@@ -33,15 +31,14 @@ class Database {
             if (this.db) {
                 this.db.close((err) => {
                     if (err) {
-                        console.error('Error closing database', err);
+                        logger.error('Error closing database', err)
                         reject(err);
                     } else {
-                        console.log('Database closed');
                         resolve();
                     }
                 });
             } else {
-                reject(new Error('Database not open'));
+                reject();
             }
         });
     }
@@ -50,24 +47,24 @@ class Database {
             if (this.db) {
                 // テーブル作成
                 // SQLファイルの読み込みと実行
-                console.log("this.currentDir", this.initSqlPath)
+                logger.info("init.sql file path", this.initSqlPath)
                 fs.readFile(this.initSqlPath + '/db/init.sql', 'utf8', (err, data) => {
                     if (err) {
-                        console.error(err.message);
+                        logger.error(err)
                         reject(err)
                     }
                     this.db!.exec(data, (err) => {
                         if (err) {
-                            console.error(err.message);
+                            logger.error(err.message)
                             reject(err)
                         } else {
-                            console.log('SQL script executed successfully.');
+                            logger.info('SQL script executed successfully.')
                             resolve();
                         }
                     });
                 });
             } else {
-                reject(new Error('init error'))
+                reject()
             }
         })
     }
@@ -76,15 +73,15 @@ class Database {
             if (this.db) {
                 this.db.run(sql, params, function (err) {
                     if (err) {
-                        console.error('Error running sql', sql);
-                        console.error(err);
+                        logger.error("Error Sql", sql)
+                        logger.error(err)
                         reject(err);
                     } else {
                         resolve(this.lastID);
                     }
                 });
             } else {
-                reject(new Error('Database not open'));
+                reject();
             }
         });
     }
@@ -93,15 +90,16 @@ class Database {
             if (this.db) {
                 this.db.get(sql, params, (err, result) => {
                     if (err) {
-                        console.error('Error running sql', sql);
-                        console.error(err);
+                        logger.error("Error Sql", sql)
+                        logger.error(err)
                         reject(err);
                     } else {
                         resolve(result);
                     }
                 });
             } else {
-                reject(new Error('Database not open'));
+                logger.error("Database not open")
+                reject();
             }
         });
     }
@@ -110,15 +108,16 @@ class Database {
             if (this.db) {
                 this.db.all(sql, params, (err, rows) => {
                     if (err) {
-                        console.error('Error running sql', sql);
-                        console.error(err);
+                        logger.error("Error Sql", sql)
+                        logger.error(err)
                         reject(err);
                     } else {
                         resolve(rows);
                     }
                 });
             } else {
-                reject(new Error('Database not open'));
+                logger.error("Database not open")
+                reject();
             }
         });
     }
@@ -126,66 +125,78 @@ class Database {
 
 // DB初期化
 export async function initDatabase() {
-    console.log("currentDir", process.cwd())
-    // console.log(window.api && window.api.isElectron() ? app.getPath('userData') : process.cwd())
+    logger.info(initDatabase.name ,"IN")
     const db = new Database()
     try {
         await db.open()
 
+        // DB初期処理（DB作成など）
         await db.init()
 
+        // タスクの全件取得
         const tasks: Task[] = await db.all('select * from task')
 
+        logger.debug(tasks)
         return tasks
     } catch (error) {
-        console.error("DB error", error)
+        logger.error(error)
         return null
     } finally {
         await db.close()
+        logger.info(initDatabase.name ,"OUT")
     }
 }
 
 export async function getTask() {
+    logger.info(getTask.name, "IN")
     const db = new Database()
     try {
         await db.open()
 
+        // タスクの全件取得
         const tasks: Task[] = await db.all('select * from task')
-        // console.log(tasks)
+        
+        logger.debug(tasks)
         return tasks
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         return null
     } finally {
         await db.close()
+        logger.info(getTask.name, "OUT")
     }
 }
 // タスク追加
 export async function addTask(task: Task) {
+    logger.info(addTask, "IN")
     const db = new Database()
     try {
         await db.open()
-        // console.log("addTask", task)
-        // const currentTime = getCurrentTime()
+
         const lastID = await db.run('INSERT INTO task (title, memo, limitDate, isCompleted, completionDate, progressStatus, progressRate, registerDate, updateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [task.title, task.memo, task.limitDate, task.isCompleted, task.completionDate, task.progressStatus, task.progressRate, task.registerDate, task.updateDate])
-    
+            [task.title, task.memo, task.limitDate, task.isCompleted, task.completionDate, task.progressStatus, task.progressRate, task.registerDate, task.updateDate])    
         const insertedTask: Task = await db.get("SELECT * FROM task WHERE taskId = ?", [lastID]);
+
+        logger.debug(insertedTask)
         return insertedTask
     } catch (error) {
-        console.error(error)
+        logger.error(error)
+        return null
     } finally {
         await db.close()
+        logger.info(addTask, "OUT")
     }
 }
 // タスク更新
 export async function updateTask(task: UpdateTask) {
+    logger.info(updateTask.name, "IN")
     const db = new Database()
     try {
+        logger.debug(task)
+
         await db.open()
         const prefixSql = 'UPDATE task SET '
         let mainSql = ''
-        // console.log("isCompleted", task)
         if (task.title !== undefined) mainSql += 'title = ?, '
         if (task.memo !== undefined) mainSql += 'memo = ?, '
         if (task.limitDate !== undefined) mainSql += 'limitDate = ?, '
@@ -193,25 +204,29 @@ export async function updateTask(task: UpdateTask) {
         if (task.completionDate !== undefined) mainSql += 'completionDate = ?, '
         if (task.progressStatus !== undefined) mainSql += 'progressStatus = ?, '
         if (task.progressRate !== undefined) mainSql += 'progressRate = ?, '
-        // console.log("mainSql", mainSql)
+
         const updateList = [task.title, task.memo, task.limitDate, task.isCompleted, task.completionDate, task.progressStatus, task.progressRate, task.updateDate, task.taskId].filter(item => item !== undefined)
         await db.run(`${prefixSql}${mainSql}updateDate = ? WHERE taskId = ?`,
             updateList)
     } catch (error) {
-        console.error(error)
+        logger.error(error)
     } finally {
         await db.close()
+        logger.info(updateTask.name, "OUT")
     }
 }
 // タスク削除
 export async function deleteTask(taskId: number) {
+    logger.info(deleteTask.name, "IN")
     const db = new Database()
     try {
+        logger.debug("taskId", taskId)
         await db.open()
         await db.run('DELETE FROM task WHERE taskId = ?', [taskId])
     } catch (error) {
-        console.error(error)
+        logger.error(error)
     } finally {
         await db.close()
+        logger.info(deleteTask.name, "OUT")
     }
 }

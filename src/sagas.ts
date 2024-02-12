@@ -33,7 +33,6 @@ function* fetchInitialProcessSaga() {
     try {
         const taskList: Task[] = yield call(fetchInitialProcess)
         yield put(fetchInitialProcessSuccess({ type: FETCH_INITIAL_SUCCESS, taskList: taskList } as FetchInitialSuccessAction ))
-        console.log("初期処理完了")
     } catch (error) {
         console.log(error)
         yield put(fetchInitialProcessFailure())
@@ -55,7 +54,6 @@ function* fetchGetTaskSaga() {
 function* fetchAddTaskSaga(action: FetchAddTaskRequestAction) {
     try {
         const task = action.addTask
-        console.log(task)
         // 追加失敗の場合は、undefined?いったん考慮しない
         const addedTask: Task | undefined = yield call(fetchAddTask, task)
 
