@@ -33,4 +33,8 @@ corsインストール
 npm install @types/cors cors --legacy-peer-deps
 
 ## リリース済みのアプリはこちら
+
+### 起動手順
+1.zipファイル（TaskMaster-win32-x64.zip）をダウンロードし、解凍。  
+2.フォルダ内の「タスク管理アプリ.exe」を起動  
 https://github.com/Rei888k/TaskMaster/releases
