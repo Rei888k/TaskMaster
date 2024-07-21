@@ -1,7 +1,8 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
-import { FETCH_ADDTASK_REQUEST, FETCH_ADDTASK_SUCCESS, FETCH_DELETETASK_REQUEST, FETCH_DELETETASK_SUCCESS, FETCH_GETTASK_REQUEST, FETCH_GETTASK_SUCCESS, FETCH_INITIAL_REQUEST, FETCH_INITIAL_SUCCESS, FETCH_UPDATETASK_REQUEST, FetchAddTaskRequestAction, FetchAddTaskSuccessAction, FetchDeleteTaskRequestAction, FetchDeleteTaskSuccesstAction, FetchGetTaskSuccessAction, FetchInitialSuccessAction, FetchUpdateTaskRequestAction, fetchAddTaskFailure, fetchAddTaskSuccess, fetchDeleteTaskFailure, fetchDeleteTaskSuccess, fetchGetTaskFailure, fetchGetTaskSuccess, fetchInitialProcessFailure, fetchInitialProcessSuccess, fetchUpdateTaskFailure, fetchUpdateTaskSuccess } from './actions';
+import { call, fork, put, take, takeEvery } from 'redux-saga/effects';
+import { FETCH_ADDTASK_REQUEST, FETCH_ADDTASK_SUCCESS, FETCH_CONNECTION_SSE, FETCH_DELETETASK_REQUEST, FETCH_DELETETASK_SUCCESS, FETCH_GETTASK_REQUEST, FETCH_GETTASK_SUCCESS, FETCH_INITIAL_REQUEST, FETCH_INITIAL_SUCCESS, FETCH_UPDATETASK_REQUEST, FetchAddTaskRequestAction, FetchAddTaskSuccessAction, FetchDeleteTaskRequestAction, FetchDeleteTaskSuccesstAction, FetchGetTaskSuccessAction, FetchInitialSuccessAction, FetchUpdateTaskRequestAction, fetchAddTaskFailure, fetchAddTaskSuccess, fetchDeleteTaskFailure, fetchDeleteTaskSuccess, fetchGetTaskFailure, fetchGetTaskSuccess, fetchInitialProcessFailure, fetchInitialProcessSuccess, fetchUpdateTaskFailure, fetchUpdateTaskSuccess } from './actions';
 import { fetchAddTask, fetchDeleteTask, fetchGetTask, fetchInitialProcess, fetchUpdateTask } from './api';
 import { Task, UpdateTask } from './interface';
+import { EventChannel, eventChannel } from 'redux-saga';
 
 // function* fetchReadFileSaga() {
 //     try {
@@ -90,6 +91,30 @@ function* fetchDeleteTaskSaga(action: FetchDeleteTaskRequestAction) {
     }
 }
 
+function createEventSourceChannel(eventSource: EventSource): EventChannel<string> {
+    return eventChannel((emit) => {
+        eventSource.onmessage = (event) => {
+            emit(event.data)
+        }
+
+        return () => eventSource.close()
+    })
+}
+
+function* watchSSEEvents(eventSource: EventSource) {
+    const eventSourceChannel = createEventSourceChannel(eventSource)
+    while (true) {
+        const data: string = yield take(eventSourceChannel)
+        yield put({ type: '', payload: data }) // TODO
+    }
+}
+
+// バックエンドとのエンドポイント作成
+function* fetchConnectionSSESaga() {
+    const eventSource = new EventSource('http://localhost:3000/notification')
+    yield fork(watchSSEEvents, eventSource)
+}
+
 export default function* rootSaga() {
     // yield takeEvery('FETCH_READFILE_REQUEST', fetchReadFileSaga)
     // yield takeEvery('FETCH_WRITEFILE_REQUEST', fetchWriteFileSaga)
@@ -98,4 +123,5 @@ export default function* rootSaga() {
     yield takeEvery(FETCH_ADDTASK_REQUEST, fetchAddTaskSaga)
     yield takeEvery(FETCH_UPDATETASK_REQUEST, fetchUpdateTaskSaga)
     yield takeEvery(FETCH_DELETETASK_REQUEST, fetchDeleteTaskSaga)
+    yield takeEvery(FETCH_CONNECTION_SSE, fetchConnectionSSESaga)
 }

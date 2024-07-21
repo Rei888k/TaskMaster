@@ -62,8 +62,8 @@ function App() {
   const dispatch = useDispatch()
 
   const allTaskList = useSelector(state => state.taskList)
-  const taskList = typeof allTaskList === 'undefined' ? [] : allTaskList.filter(task => !task.isCompleted )
-  const completedTaskList = typeof allTaskList === 'undefined' ? [] : allTaskList.filter(task => task.isCompleted )
+  const taskList = typeof allTaskList === 'undefined' ? [] : allTaskList.filter(task => !task.isCompleted)
+  const completedTaskList = typeof allTaskList === 'undefined' ? [] : allTaskList.filter(task => task.isCompleted)
   // const completedTaskList = useSelector(state => state.completedTaskList)
   const loading = useSelector(state => state.loading)
   const calendar = useSelector(state => state.calendar)
@@ -134,7 +134,7 @@ function App() {
       progressStatus: 0, // いったんいじらない
       progressRate: 0, // いったんいじらない
       updateDate: getCurrentTime()
-    }    
+    }
     dispatch(fetchUpdateTaskRequest({ type: FETCH_UPDATETASK_REQUEST, updateTask: task }))
     setEditTitleState({ id: NaN, isEditting: false })
   }
@@ -202,11 +202,46 @@ function App() {
 
   useEffect(() => {
     console.log("mount")
+
+    // 通知の許可
+    Notification.requestPermission().then(permission => {
+      console.log('Notification permission', permission);
+    });
+
     // マウント時呼び出す
     dispatch(fetchInitialProcessRequest())
     // dispatch(fetchGetTaskRequest())
     console.log("mouint finish")
   }, [dispatch])
+
+  const handleNotificationClick = () => {
+    if (Notification.permission === "granted") {
+
+      // すでに許可されている場合
+      const notification = new Notification("通知のタイトル", {
+        body: "これは通知の本文です。",
+        requireInteraction: false,
+        tag: "message",
+      });
+      notification.onclick = () => {
+        window.focus()
+      }
+    } else if (Notification.permission !== "denied") {
+      // 許可がまだ得られていない場合
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          const notification = new Notification("通知のタイトル", {
+            body: "これは通知の本文です。",
+            requireInteraction: false,
+            tag: "message",
+          });
+          notification.onclick = () => {
+            window.focus()
+          }
+        }
+      });
+    }
+  }
 
   return (
     <div className="App" style={rootStyle}>
@@ -217,6 +252,7 @@ function App() {
           <h1 style={{ padding: '0px 15px' }}>タスク管理アプリ</h1>
           {/* <Button onMouseUp={handleOnSaveClick}>保存</Button> */}
           {/* <Button onMouseUp={handleOnLoadClick}>読込</Button> */}
+          <Button onClick={handleNotificationClick}>ボタン</Button>
         </Grid>
       </Tooltip>
       <Grid>

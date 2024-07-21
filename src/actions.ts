@@ -31,10 +31,7 @@ export interface FetchGetTaskSuccessAction {
     type: typeof FETCH_GETTASK_SUCCESS
     taskList: Task[]
 }
-
 export const FETCH_GETTASK_FAILURE = 'FETCH_GETTASK_FAILURE'
-
-
 
 // タスク追加
 export const FETCH_ADDTASK_REQUEST = 'FETCH_ADDTASK_REQUEST'
@@ -42,13 +39,11 @@ export interface FetchAddTaskRequestAction {
     type: typeof FETCH_ADDTASK_REQUEST
     addTask: Task
 }
-
 export const FETCH_ADDTASK_SUCCESS = 'FETCH_ADDTASK_SUCCESS'
 export interface FetchAddTaskSuccessAction {
     type: typeof FETCH_ADDTASK_SUCCESS
     addTask: Task
 }
-
 export const FETCH_ADDTASK_FAILURE = 'FETCH_ADDTASK_FAILURE'
 
 // タスク更新
@@ -57,7 +52,6 @@ export interface FetchUpdateTaskRequestAction {
     type: typeof FETCH_UPDATETASK_REQUEST
     updateTask: UpdateTask
 }
-
 export const FETCH_UPDATETASK_SUCCESS = 'FETCH_UPDATETASK_SUCCESS'
 export const FETCH_UPDATETASK_FAILURE = 'FETCH_UPDATETASK_FAILURE'
 
@@ -67,13 +61,21 @@ export interface FetchDeleteTaskRequestAction {
     type: typeof FETCH_DELETETASK_REQUEST
     taskId: number
 }
-
 export const FETCH_DELETETASK_SUCCESS = 'FETCH_DELETETASK_SUCCESS'
 export interface FetchDeleteTaskSuccesstAction {
     type: typeof FETCH_DELETETASK_SUCCESS
     taskId: number
 }
 export const FETCH_DELETETASK_FAILURE = 'FETCH_DELETETASK_FAILURE'
+
+// バックエンドとのエンドポイント作成
+export const FETCH_CONNECTION_SSE = 'FETCH_CONNECTION_SSE'
+// バックエンドからSSEを通じてデータを受信する
+export const FETCH_RECEIVE_SSE_EVENT = 'FETCH_RECEIVE_SSE_EVENT'
+export interface FetchReceiveSSEEventAction {
+    type: typeof FETCH_RECEIVE_SSE_EVENT
+    message: string
+}
 
 // 読込ボタン押下
 export const fetchReadFileRequest = () => {
@@ -210,5 +212,11 @@ export const fetchDeleteTaskSuccess = (data: FetchDeleteTaskSuccesstAction) => {
 export const fetchDeleteTaskFailure = () => {
     return {
         type: FETCH_DELETETASK_FAILURE
+    }
+}
+export const fetchReceiveSSEEvent = (data: FetchReceiveSSEEventAction) => {
+    return {
+        type: FETCH_RECEIVE_SSE_EVENT,
+        message: data.message
     }
 }

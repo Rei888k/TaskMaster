@@ -154,6 +154,27 @@ app.get('/initial', (req: Request, res: Response) => {
     }
 })
 
+app.get('/notification', (req: Request, res: Response) => {
+    try {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+
+        const data = { message: "notification from backend."}
+
+        const intervalId = setInterval(() => {
+            res.write(`data: ${JSON.stringify({ message: '定期的な通知'})}\n\n`)
+        }, 10000)
+
+        req.on('close', () => {
+            clearInterval(intervalId)
+        })
+    } catch (error) {
+        logger.error("notification", error)
+        res.status(500).send("notification error")
+    }
+})
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
