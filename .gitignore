@@ -25,3 +25,5 @@ yarn-error.log*
 /タスク管理アプリ-win32-x64
 /dist
 /logs
+
+/db/database.db

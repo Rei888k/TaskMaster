@@ -5,8 +5,6 @@ export interface Task {
     limitDate: string | null
     isCompleted: boolean
     completionDate: string | null
-    progressStatus: number
-    progressRate: number
     registerDate: string
     updateDate: string | null
 }
@@ -18,8 +16,6 @@ export interface UpdateTask {
     limitDate?: string | null
     isCompleted?: boolean
     completionDate?: string | null
-    progressStatus?: number
-    progressRate?: number
     // registerDate: string
     updateDate: string | null
 }
