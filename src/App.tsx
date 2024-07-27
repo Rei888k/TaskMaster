@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useEffect, useState } from 'react';
 import './App.css';
 import { Button, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material';
@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { ja } from 'date-fns/locale';
 import { useDispatch } from 'react-redux';
-import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, fetchAddTaskRequest, fetchGetTaskRequest, fetchInitialProcessRequest, fetchUpdateTaskRequest } from './actions';
+import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, fetchAddTaskRequest, fetchInitialProcessRequest, fetchUpdateTaskRequest } from './actions';
 import { useSelector } from './store';
 import ConfirmModal from './ConfirmModal';
 import { Task, UpdateTask } from './interface';
@@ -151,25 +151,25 @@ function App() {
   }
 
   // 更新ボタン押下
-  const handleOnUpdateTitleClick = (id: number) => {
+  const handleOnUpdateTitleClick = useCallback(() => {
     const task: UpdateTask = {
-      taskId: id,
+      taskId: editTitleState.id,
       title: inputValueForUpdate,
       memo: inputMemoValueForUpdate,
       updateDate: getCurrentTime()
     }
     dispatch(fetchUpdateTaskRequest({ type: FETCH_UPDATETASK_REQUEST, updateTask: task }))
     setEditTitleState({ id: NaN, isEditting: false })
-  }
+  }, [dispatch, inputMemoValueForUpdate, inputValueForUpdate, editTitleState.id])
 
   // Enterキー押下
   const handleKeyPress = (event: any) => {
-    if (event.key == 'Enter' && event.ctrlKey && !editTitleState.isEditting) {
+    if (event.key === 'Enter' && event.ctrlKey && !editTitleState.isEditting) {
       handleOnContinueAddClick()
     }
     else if (event.key === 'Enter') {
       if (editTitleState.isEditting) {
-        handleOnUpdateTitleClick(editTitleState.id)
+        handleOnUpdateTitleClick()
       } else {
         handleOnAddClick()
       }
@@ -217,10 +217,11 @@ function App() {
   }
 
   useEffect(() => {
-    if (isTextFocus.taskField === false && isTextFocus.memoField === false && !Number.isNaN(editTitleState.id)) {
-      handleOnUpdateTitleClick(editTitleState.id)
+    // if (isTextFocus.taskField === false && isTextFocus.memoField === false && !Number.isNaN(editTitleState.id)) {
+    if (isTextFocus.taskField === false && isTextFocus.memoField === false) {
+      handleOnUpdateTitleClick()
     }
-  }, [isTextFocus])
+  }, [isTextFocus, handleOnUpdateTitleClick])
 
   useEffect(() => {
     console.log("mount")

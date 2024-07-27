@@ -6,10 +6,10 @@ import React from 'react';
 
 Modal.setAppElement('#root');
 
-interface KeyBindingModalProps {
-    id: number | null
-    date: Date | null
-}
+// interface KeyBindingModalProps {
+//     id: number | null
+//     date: Date | null
+// }
 
 const customStyles = {
     content: {
