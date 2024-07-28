@@ -1,7 +1,7 @@
 import { Task, UpdateTask } from "./interface";
 
 // サーバー側のエンドポイント
-const API_URL = 'http://localhost:3001';
+const API_URL = process.env.REACT_APP_API_URL;
 
 // データをバックエンドから取得するための関数
 // export const fetchGetTaskData = async () => {

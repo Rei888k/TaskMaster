@@ -11,6 +11,7 @@
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
     "@mui/x-date-pickers": "^6.18.1",
+    "@netlify/functions": "^2.8.1",
     "@reduxjs/toolkit": "^1.9.7",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -84,6 +85,7 @@
   },
   "devDependencies": {
     "@types/electron": "^1.6.10",
+    "@types/node": "^20.14.12",
     "@types/sqlite3": "^3.1.11",
     "electron": "^28.2.0",
     "electron-packager": "^17.1.2",
