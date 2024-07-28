@@ -1,25 +1,27 @@
 import { Handler, HandlerResponse } from "@netlify/functions";
 import { logger } from "../../src/logger";
-import { initDatabase } from "../../src/db";
+import { addTask } from "../../src/db";
 import { Task } from "../../src/interface";
 
 export const handler: Handler = async (event, context): Promise<HandlerResponse> => {
+    const task: Task = JSON.parse(event.body!);
+
     return new Promise((resolve, reject) => {
         try {
-            initDatabase().then((tasks: Task[] | null) => {
+            addTask(task).then((task) => {
                 resolve({
                     statusCode: 200,
-                    body: JSON.stringify(tasks)
+                    body: JSON.stringify(task)
                 })
             }).catch((error) => {
-                logger.error("initial", error.message)
+                logger.error("addtask", error.message)
                 reject({
                     statusCode: 500,
                     body: JSON.stringify(error)
                 })
             })
         } catch (error) {
-            logger.error("initial", error)
+            logger.error("addtask", error)
             reject({
                 statusCode: 500,
                 body: JSON.stringify(error)
