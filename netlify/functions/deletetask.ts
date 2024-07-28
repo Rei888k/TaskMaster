@@ -16,14 +16,14 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
                 logger.error("deletetask", error.message)
                 reject({
                     statusCode: 500,
-                    body: JSON.stringify({ error: 'Failed to deletetask' })
+                    body: JSON.stringify(error)
                 })
             })
         } catch (error) {
             logger.error("deletetask", error)
             reject({
                 statusCode: 500,
-                body: JSON.stringify({ error: 'Failed to deletetask' })
+                body: JSON.stringify(error)
             })
         }
     })

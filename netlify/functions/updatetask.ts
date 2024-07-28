@@ -16,14 +16,14 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
                 logger.error("updatetask", error.message)
                 reject({
                     statusCode: 500,
-                    body: JSON.stringify({ error: 'Failed to updatetask' })
+                    body: JSON.stringify(error)
                 })
             })
         } catch (error) {
             logger.error("updatetask", error)
             reject({
                 statusCode: 500,
-                body: JSON.stringify({ error: 'Failed to udpate-task' })
+                body: JSON.stringify(error)
             })
         }
     })

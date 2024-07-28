@@ -9,20 +9,20 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
             initDatabase().then((tasks: Task[] | null) => {
                 resolve({
                     statusCode: 200,
-                    body: JSON.stringify({ tasks })
+                    body: JSON.stringify(tasks)
                 })
             }).catch((error) => {
                 logger.error("initial", error.message)
                 reject({
                     statusCode: 500,
-                    body: JSON.stringify({ error: 'Failed to initial' })
+                    body: JSON.stringify(error)
                 })
             })
         } catch (error) {
             logger.error("initial", error)
             reject({
                 statusCode: 500,
-                body: JSON.stringify({ error: 'Failed to initial' })
+                body: JSON.stringify(error)
             })
         }
     })

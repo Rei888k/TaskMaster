@@ -11,20 +11,20 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
             addTask(task).then((task) => {
                 resolve({
                     statusCode: 200,
-                    body: JSON.stringify({ task })
+                    body: JSON.stringify(task)
                 })
             }).catch((error) => {
                 logger.error("addtask", error.message)
                 reject({
                     statusCode: 500,
-                    body: JSON.stringify({ error: 'Failed to addtask' })
+                    body: JSON.stringify(error)
                 })
             })
         } catch (error) {
             logger.error("addtask", error)
             reject({
                 statusCode: 500,
-                body: JSON.stringify({ error: 'Failed to addtask' })
+                body: JSON.stringify(error)
             })
         }
     })

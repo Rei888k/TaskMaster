@@ -1,8 +1,8 @@
-import { app } from 'electron';
+// import { app } from 'electron';
 import log4js from 'log4js';
 import { promises as fsPromises } from 'fs';
 
-const logPath = (typeof process !== 'undefined' && process.versions && !!process.versions.electron) ? app.getPath('userData') : process.cwd()
+const logPath = process.cwd()
 console.log("logPath", logPath)
 // dbフォルダ作成
 fsPromises.mkdir(logPath + '/logs', { recursive: true }).then(() => {
