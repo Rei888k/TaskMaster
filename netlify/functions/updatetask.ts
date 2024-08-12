@@ -1,7 +1,8 @@
 import { Handler, HandlerResponse } from "@netlify/functions";
 import { logger } from "../../src/logger";
-import { updateTask } from "../../src/db";
+// import { updateTask } from "../../src/db";
 import { UpdateTask } from "../../src/interface";
+import { updateTask } from "../../src/firebasedb";
 
 export const handler: Handler = async (event, context): Promise<HandlerResponse> => {
     const task: UpdateTask = JSON.parse(event.body!);
