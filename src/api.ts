@@ -159,7 +159,7 @@ export const fetchUpdateTask = async (task: UpdateTask) => {
     }
 };
 
-export const fetchDeleteTask = async (taskId: number) => {
+export const fetchDeleteTask = async (taskId: string | null) => {
     try {
         if (window.api && window.api.isElectron()) {
             await window.api.invoke('delete-task', taskId);

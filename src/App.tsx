@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { ja } from 'date-fns/locale';
 import { useDispatch } from 'react-redux';
-import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, fetchAddTaskRequest, fetchInitialProcessRequest, fetchUpdateTaskRequest } from './actions';
+import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, fetchAddTaskRequest, fetchGetTaskRequest, fetchInitialProcessRequest, fetchUpdateTaskRequest } from './actions';
 import { useSelector } from './store';
 import ConfirmModal from './ConfirmModal';
 import { Task, UpdateTask } from './interface';
@@ -19,7 +19,7 @@ import KeyBindingModal from './KeyBindingModal';
 // import EditNoteIcon from '@mui/icons-material/EditNote';
 
 interface EditState {
-  id: number
+  id: string | null
   isEditting: boolean
 }
 
@@ -55,7 +55,7 @@ function App() {
   const [inputMemoValue, setInputMemoValue] = useState<string>("")
   const [inputValueForUpdate, setInputValueForUpdate] = useState<string>("")
   const [inputMemoValueForUpdate, setInputMemoValueForUpdate] = useState<string | null>("")
-  const [editTitleState, setEditTitleState] = useState<EditState>({ id: NaN, isEditting: false })
+  const [editTitleState, setEditTitleState] = useState<EditState>({ id: null, isEditting: false })
   const [taskOpen, setTaskOpen] = useState<boolean>(false)
   const [isTextFocus, setIsTextFocus] = useState({ taskField: false, memoField: false })
   // console.log("isTextFocus", isTextFocus)
@@ -94,7 +94,7 @@ function App() {
   // 追加ボタン押下
   const handleOnAddClick = () => {
     const task: Task = {
-      taskId: NaN,
+      taskId: null,
       title: inputValue,
       memo: inputMemoValue,
       limitDate: calendar != null ? calendar.toLocaleDateString() : null,
@@ -116,7 +116,7 @@ function App() {
   // 続けて追加するボタン押下
   const handleOnContinueAddClick = () => {
     const task: Task = {
-      taskId: NaN,
+      taskId: null,
       title: inputValue,
       memo: inputMemoValue,
       limitDate: calendar != null ? calendar.toLocaleDateString() : null,
@@ -139,7 +139,7 @@ function App() {
   }
 
   // 編集ボタン押下
-  const handleOnEditTitleClick = (id: number) => {
+  const handleOnEditTitleClick = (id: string | null) => {
     setEditTitleState({ id, isEditting: true })
     // 未完了タスク
     const task = taskList.find((task) => task.taskId === id)
@@ -152,14 +152,16 @@ function App() {
 
   // 更新ボタン押下
   const handleOnUpdateTitleClick = useCallback(() => {
-    const task: UpdateTask = {
-      taskId: editTitleState.id,
-      title: inputValueForUpdate,
-      memo: inputMemoValueForUpdate,
-      updateDate: getCurrentTime()
+    if (editTitleState.id != null) {
+      const task: UpdateTask = {
+        taskId: editTitleState.id,
+        title: inputValueForUpdate,
+        memo: inputMemoValueForUpdate,
+        updateDate: getCurrentTime()
+      }
+      dispatch(fetchUpdateTaskRequest({ type: FETCH_UPDATETASK_REQUEST, updateTask: task }))
+      setEditTitleState({ id: null, isEditting: false })  
     }
-    dispatch(fetchUpdateTaskRequest({ type: FETCH_UPDATETASK_REQUEST, updateTask: task }))
-    setEditTitleState({ id: NaN, isEditting: false })
   }, [dispatch, inputMemoValueForUpdate, inputValueForUpdate, editTitleState.id])
 
   // Enterキー押下
@@ -177,7 +179,7 @@ function App() {
   }
 
   // 完了ボタン押下
-  const handleCompleteClick = (id: number) => {
+  const handleCompleteClick = (id: string | null) => {
     // dispatch(completeButton(id, new Date().toLocaleDateString()))
     const task: UpdateTask = {
       taskId: id,
@@ -190,7 +192,7 @@ function App() {
   }
 
   // 元に戻すボタン押下
-  const handleBackClick = (id: number) => {
+  const handleBackClick = (id: string | null) => {
     // dispatch(backButton(id))
 
     const task: UpdateTask = {
@@ -203,15 +205,15 @@ function App() {
     dispatch(fetchUpdateTaskRequest({ type: FETCH_UPDATETASK_REQUEST, updateTask: task }))
   }
 
-  const handleOnTaskClick = (id: number) => {
+  const handleOnTaskClick = (id: string | null) => {
     handleOnEditTitleClick(id)
   }
 
-  const handleTitleBlur = (event: any, id: number, field: string) => {
+  const handleTitleBlur = (event: any, id: string | null, field: string) => {
     setIsTextFocus({ ...isTextFocus, [field]: false })
   };
 
-  const handleOnFocus = (id: number, field: string) => {
+  const handleOnFocus = (id: string | null, field: string) => {
     setIsTextFocus({ ...isTextFocus, [field]: true })
     handleOnTaskClick(id)
   }
@@ -226,8 +228,8 @@ function App() {
   useEffect(() => {
     console.log("mount")
     // マウント時呼び出す
-    dispatch(fetchInitialProcessRequest())
-    // dispatch(fetchGetTaskRequest())
+    // dispatch(fetchInitialProcessRequest())
+    dispatch(fetchGetTaskRequest())
     console.log("mouint finish")
   }, [dispatch])
 

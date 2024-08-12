@@ -1,5 +1,5 @@
 export interface Task {
-    taskId: number
+    taskId: string | null
     title: string
     memo: string | null
     limitDate: string | null
@@ -10,7 +10,7 @@ export interface Task {
 }
 
 export interface UpdateTask {
-    taskId: number
+    taskId: string | null
     title?: string
     memo?: string | null
     limitDate?: string | null

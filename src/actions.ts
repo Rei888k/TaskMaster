@@ -65,13 +65,13 @@ export const FETCH_UPDATETASK_FAILURE = 'FETCH_UPDATETASK_FAILURE'
 export const FETCH_DELETETASK_REQUEST = 'FETCH_DELETETASK_REQUEST'
 export interface FetchDeleteTaskRequestAction {
     type: typeof FETCH_DELETETASK_REQUEST
-    taskId: number
+    taskId: string | null
 }
 
 export const FETCH_DELETETASK_SUCCESS = 'FETCH_DELETETASK_SUCCESS'
 export interface FetchDeleteTaskSuccesstAction {
     type: typeof FETCH_DELETETASK_SUCCESS
-    taskId: number
+    taskId: string | null
 }
 export const FETCH_DELETETASK_FAILURE = 'FETCH_DELETETASK_FAILURE'
 

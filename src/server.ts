@@ -3,9 +3,10 @@ import express from 'express'
 import { Request, Response } from 'express';
 import cors from "cors";
 // import cors = require('cors')
-import { getTask, initDatabase, addTask, updateTask, deleteTask } from './db';
+// import { getTask, initDatabase, addTask, updateTask, deleteTask } from './db';
 import { Task, UpdateTask } from './interface';
 import { logger } from './logger';
+import { addTask, deleteTask, getTask, updateTask } from './firebasedb';
 const app = express();
 const cookieParser = require('cookie-parser');
 
@@ -94,6 +95,13 @@ app.post('/addtask', (req: Request, res: Response) => {
     res.set({ 'Access-Control-Allow-Origin': 'http://localhost:3000' });
     const task: Task = req.body
     try {
+        // addTask(task).then((task) => {
+        //     res.json(task)
+        //     // res.send('File written successfully');
+        // }).catch((error) => {
+        //     logger.error("addtask", error.message)
+        //     res.status(500).send('Error reading file');
+        // })
         addTask(task).then((task) => {
             res.json(task)
             // res.send('File written successfully');
@@ -142,12 +150,12 @@ app.delete('/deletetask', (req: Request, res: Response) => {
 // アプリ初期処理
 app.get('/initial', (req: Request, res: Response) => {
     try {
-        initDatabase().then((tasks: Task[] | null) => {
-            res.json(tasks)
-        }).catch((error) => {
-            logger.error("initial", error.message)
-            res.status(500).send('Error reading file');
-        })
+        // initDatabase().then((tasks: Task[] | null) => {
+        //     res.json(tasks)
+        // }).catch((error) => {
+        //     logger.error("initial", error.message)
+        //     res.status(500).send('Error reading file');
+        // })
     } catch (error) {
         logger.error("initial", error)
         res.status(500).send("初期処理エラー")
