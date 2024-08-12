@@ -15,7 +15,7 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
                     headers: {
                         'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
                         'Access-Control-Allow-Headers': 'Content-Type',
-                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
                     },
                     body: JSON.stringify(task)
                 })
@@ -26,7 +26,7 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
                     headers: {
                         'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
                         'Access-Control-Allow-Headers': 'Content-Type',
-                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
                     },
                     body: JSON.stringify(error)
                 })
@@ -38,7 +38,7 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
                 headers: {
                     'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
                     'Access-Control-Allow-Headers': 'Content-Type',
-                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
                 },
                 body: JSON.stringify(error)
             })
