@@ -11,12 +11,22 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
         try {
             deleteTask(body.taskId).then(() => {
                 resolve({
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    },
                 })
             }).catch((error) => {
                 logger.error("deletetask", error.message)
                 reject({
                     statusCode: 500,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    },
                     body: JSON.stringify(error)
                 })
             })
@@ -24,6 +34,11 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
             logger.error("deletetask", error)
             reject({
                 statusCode: 500,
+                headers: {
+                    'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                },
                 body: JSON.stringify(error)
             })
         }
