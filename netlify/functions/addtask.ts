@@ -5,6 +5,8 @@ import { Task } from "../../src/interface";
 import { addTask } from "../../src/firebasedb";
 
 export const handler: Handler = async (event, context): Promise<HandlerResponse> => {
+    console.log("調査用ログ")
+    console.log(event.body!)
     const task: Task = JSON.parse(event.body!);
 
     return new Promise((resolve, reject) => {
