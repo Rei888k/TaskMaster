@@ -8,9 +8,9 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
     console.log("調査用ログ")
     console.log(event.httpMethod)
     console.log(event.body!)
-    const task: Task = JSON.parse(event.body!);
 
     if (event.httpMethod == "OPTIONS") {
+        console.log("options")
         return {
             statusCode: 200,
             headers: {
@@ -22,6 +22,7 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
         };
     }
 
+    const task: Task = JSON.parse(event.body!);
     return new Promise((resolve, reject) => {
         try {
             addTask(task).then((task) => {
