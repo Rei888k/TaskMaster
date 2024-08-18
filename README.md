@@ -38,3 +38,8 @@ npm install @types/cors cors --legacy-peer-deps
 1.zipファイル（TaskMaster-win32-x64.zip）をダウンロードし、解凍。  
 2.フォルダ内の「タスク管理アプリ.exe」を起動  
 https://github.com/Rei888k/TaskMaster/releases
+
+
+### `netlify dev`
+
+netlifyのローカルサーバーを起動する

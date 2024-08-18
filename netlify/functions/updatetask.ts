@@ -13,7 +13,7 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Methods': 'PUT',
             },
             body: "",
         };
@@ -25,22 +25,12 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
         try {
             updateTask(task).then(() => {
                 resolve({
-                    statusCode: 200,
-                    headers: {
-                        'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
-                        'Access-Control-Allow-Headers': 'Content-Type',
-                        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                    },
+                    statusCode: 200
                 })
             }).catch((error) => {
                 logger.error("updatetask", error.message)
                 reject({
                     statusCode: 500,
-                    headers: {
-                        'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
-                        'Access-Control-Allow-Headers': 'Content-Type',
-                        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                    },
                     body: JSON.stringify(error)
                 })
             })
@@ -48,11 +38,6 @@ export const handler: Handler = async (event, context): Promise<HandlerResponse>
             logger.error("updatetask", error)
             reject({
                 statusCode: 500,
-                headers: {
-                    'Access-Control-Allow-Origin': '*', // すべてのオリジンを許可
-                    'Access-Control-Allow-Headers': 'Content-Type',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                },
                 body: JSON.stringify(error)
             })
         }
