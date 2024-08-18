@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 Modal.setAppElement('#root');
 
 interface ConfirmModalProps {
-    id: number
+    id: string | null
     buttonName: string
 }
 

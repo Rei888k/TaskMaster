@@ -11,7 +11,7 @@ import React from 'react';
 Modal.setAppElement('#root');
 
 interface CalendarModalProps {
-    id: number | null
+    id: string | null
     date: Date | null
     disabled: boolean
 }

@@ -1,11 +1,23 @@
 import { Handler, HandlerResponse } from "@netlify/functions";
 import { logger } from "../../src/logger";
-import { addTask } from "../../src/db";
+// import { addTask } from "../../src/db";
 import { Task } from "../../src/interface";
+import { addTask } from "../../src/firebasedb";
 
 export const handler: Handler = async (event, context): Promise<HandlerResponse> => {
-    const task: Task = JSON.parse(event.body!);
+    if (event.httpMethod == "OPTIONS") {
+        return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                'Access-Control-Allow-Methods': 'POST',
+            },
+            body: "",
+        };
+    }
 
+    const task: Task = JSON.parse(event.body!);
     return new Promise((resolve, reject) => {
         try {
             addTask(task).then((task) => {

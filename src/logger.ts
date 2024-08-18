@@ -2,7 +2,8 @@
 import log4js from 'log4js';
 import { promises as fsPromises } from 'fs';
 
-const logPath = process.cwd()
+// const logPath = process.cwd()
+const logPath = '/tmp'
 console.log("logPath", logPath)
 // dbフォルダ作成
 fsPromises.mkdir(logPath + '/logs', { recursive: true }).then(() => {
