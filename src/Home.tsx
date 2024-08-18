@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useEffect, useState } from 'react';
 import './App.css';
 import { Button, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material';
@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { ja } from 'date-fns/locale';
 import { useDispatch } from 'react-redux';
-import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, fetchAddTaskRequest, fetchGetTaskRequest, fetchInitialProcessRequest, fetchUpdateTaskRequest } from './actions';
+import { FETCH_ADDTASK_REQUEST, FETCH_UPDATETASK_REQUEST, fetchAddTaskRequest, fetchInitialProcessRequest, fetchUpdateTaskRequest } from './actions';
 import { useSelector } from './store';
 import ConfirmModal from './ConfirmModal';
 import { Task, UpdateTask } from './interface';
@@ -15,6 +15,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CalendarModal from './CalendarModal';
 import { getCurrentTime } from './common';
+import KeyBindingModal from './KeyBindingModal';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,8 +102,6 @@ function Home() {
             limitDate: calendar != null ? calendar.toLocaleDateString() : null,
             isCompleted: false,
             completionDate: null,
-            progressStatus: 0,
-            progressRate: 0,
             registerDate: getCurrentTime(),
             updateDate: null
         }
@@ -113,6 +112,32 @@ function Home() {
         setInputValue("")
         setInputMemoValue("")
         setTaskOpen(false)
+    }
+
+    const inputRef = useRef<HTMLInputElement>(null);
+    // 続けて追加するボタン押下
+    const handleOnContinueAddClick = () => {
+        const task: Task = {
+            taskId: NaN,
+            title: inputValue,
+            memo: inputMemoValue,
+            limitDate: calendar != null ? calendar.toLocaleDateString() : null,
+            isCompleted: false,
+            completionDate: null,
+            registerDate: getCurrentTime(),
+            updateDate: null
+        }
+        // タスク追加
+        dispatch(fetchAddTaskRequest({ type: FETCH_ADDTASK_REQUEST, addTask: task }))
+
+        // テキストフィールドをリセットする TODO
+        setInputValue("")
+        setInputMemoValue("")
+
+        // タスク名の入力フィールドをフォーカスする
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
     }
 
     // 編集ボタン押下
@@ -128,24 +153,25 @@ function Home() {
     }
 
     // 更新ボタン押下
-    const handleOnUpdateTitleClick = (id: number) => {
+    const handleOnUpdateTitleClick = useCallback(() => {
         const task: UpdateTask = {
-            taskId: id,
+            taskId: editTitleState.id,
             title: inputValueForUpdate,
             memo: inputMemoValueForUpdate,
-            progressStatus: 0, // いったんいじらない
-            progressRate: 0, // いったんいじらない
             updateDate: getCurrentTime()
         }
         dispatch(fetchUpdateTaskRequest({ type: FETCH_UPDATETASK_REQUEST, updateTask: task }))
         setEditTitleState({ id: NaN, isEditting: false })
-    }
+    }, [dispatch, inputMemoValueForUpdate, inputValueForUpdate, editTitleState.id])
 
     // Enterキー押下
     const handleKeyPress = (event: any) => {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && event.ctrlKey && !editTitleState.isEditting) {
+            handleOnContinueAddClick()
+        }
+        else if (event.key === 'Enter') {
             if (editTitleState.isEditting) {
-                handleOnUpdateTitleClick(editTitleState.id)
+                handleOnUpdateTitleClick()
             } else {
                 handleOnAddClick()
             }
@@ -159,8 +185,6 @@ function Home() {
             taskId: id,
             isCompleted: true,
             completionDate: getCurrentTime(),
-            progressStatus: 0, // いったんいじらない
-            progressRate: 0, // いったんいじらない
             updateDate: getCurrentTime()
         }
         console.log(id)
@@ -175,8 +199,6 @@ function Home() {
             taskId: id,
             isCompleted: false,
             completionDate: getCurrentTime(),
-            progressStatus: 0, // いったんいじらない
-            progressRate: 0, // いったんいじらない
             updateDate: getCurrentTime()
         }
 
@@ -197,10 +219,11 @@ function Home() {
     }
 
     useEffect(() => {
-        if (isTextFocus.taskField === false && isTextFocus.memoField === false && !Number.isNaN(editTitleState.id)) {
-            handleOnUpdateTitleClick(editTitleState.id)
+        // if (isTextFocus.taskField === false && isTextFocus.memoField === false && !Number.isNaN(editTitleState.id)) {
+        if (isTextFocus.taskField === false && isTextFocus.memoField === false) {
+            handleOnUpdateTitleClick()
         }
-    }, [isTextFocus])
+    }, [isTextFocus, handleOnUpdateTitleClick])
 
     useEffect(() => {
         console.log("mount")
@@ -224,28 +247,32 @@ function Home() {
                     <h1 style={{ padding: '0px 15px' }}>タスク管理アプリ</h1>
                     {/* <Button onMouseUp={handleOnSaveClick}>保存</Button> */}
                     {/* <Button onMouseUp={handleOnLoadClick}>読込</Button> */}
+                    <div style={{ alignContent: 'center' }}><KeyBindingModal /></div>
                 </Grid>
             </Tooltip>
             <Grid>
                 {/* <Typography color='red'>{errorMessage}</Typography> */}
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
+                        {/* ヘッダー部 */}
                         <TableHead>
                             <TableRow>
                                 <TableCell colSpan={2} style={tableHeader1}>{`未完了（${taskList.length}件）`}</TableCell>
-                                <TableCell style={tableHeader2}>日付</TableCell>
+                                <TableCell style={tableHeader2}>期限</TableCell>
                                 <TableCell style={tableHeader3}></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
+                            {/* タスクを追加 */}
                             <TableRow>
                                 <TableCell style={tableColumn1}></TableCell>
-                                <TableCell style={tableColumn2} sx={{ padding: 0 }}>
-                                    <Button onMouseUp={() => setTaskOpen(!taskOpen)} sx={{ padding: 0 }}>タスクを追加</Button>
+                                <TableCell style={tableColumn2} sx={{ paddingBottom: 0, paddingTop: 0 }}>
+                                    <Button onMouseUp={() => setTaskOpen(!taskOpen)} sx={{ paddingBottom: 0, paddingTop: 0 }}>タスクを追加</Button>
                                 </TableCell>
                                 <TableCell style={tableColumn3}></TableCell>
                                 <TableCell style={tableColumn4}></TableCell>
                             </TableRow>
+                            {/* 入力欄 */}
                             <TableRow>
                                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }}>
                                     <Collapse in={taskOpen} timeout="auto" unmountOnExit></Collapse>
@@ -261,6 +288,7 @@ function Home() {
                                                 onKeyDown={handleKeyPress}
                                                 value={inputValue}
                                                 sx={{ zIndex: 0 }}
+                                                inputRef={inputRef}
                                             />
                                             <TextField
                                                 label="メモ"
@@ -273,6 +301,7 @@ function Home() {
                                             <Grid>
                                                 <Button onMouseUp={handleOnAddClick}>追加</Button>
                                                 <Button onMouseUp={() => setTaskOpen(false)}>キャンセル</Button>
+                                                <Button onMouseUp={handleOnContinueAddClick}>続けて追加する</Button>
                                             </Grid>
                                         </Grid>
                                     </Collapse>
@@ -280,7 +309,7 @@ function Home() {
                                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }}>
                                     <Collapse in={taskOpen} timeout="auto" unmountOnExit>
                                         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
-                                            <CalendarModal id={null} date={calendar} />
+                                            <CalendarModal id={null} date={calendar} disabled={false} />
                                         </LocalizationProvider>
                                     </Collapse>
                                 </TableCell>
@@ -330,14 +359,14 @@ function Home() {
                                                 </Grid>
                                                 :
                                                 <>
-                                                    <Grid sx={{ width: '100%' }}>{task.title}</Grid>
+                                                    <Grid sx={{ width: '100%', fontWeight: 'bold' }}>{task.title}</Grid>
                                                     <Grid sx={{ width: '100%' }}>{task.memo}</Grid>
                                                 </>
                                             }
                                         </TableCell>
                                         <TableCell style={tableColumn3}>
                                             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
-                                                <CalendarModal id={task.taskId} date={task.limitDate != null ? new Date(task.limitDate as string) : null} />
+                                                <CalendarModal id={task.taskId} date={task.limitDate != null ? new Date(task.limitDate as string) : null} disabled={false} />
                                             </LocalizationProvider>
                                         </TableCell>
                                         <TableCell>
@@ -414,15 +443,15 @@ function Home() {
                                                 </>
                                                 :
                                                 <>
-                                                    <div>{task.title}</div>
-                                                    <div>{task.memo}</div>
+                                                    <Grid sx={{ width: '100%', fontWeight: 'bold' }}>{task.title}</Grid>
+                                                    <Grid sx={{ width: '100%' }}>{task.memo}</Grid>
                                                 </>
-
                                             }
                                         </TableCell>
                                         <TableCell style={tableColumn3}>
                                             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
-                                                <CalendarModal id={task.taskId} date={task.limitDate != null ? new Date(task.limitDate as string) : null} />
+                                                {/* <CalendarModal id={task.taskId} date={task.limitDate != null ? new Date(task.limitDate as string) : null} /> */}
+                                                <CalendarModal id={task.taskId} date={task.completionDate != null ? new Date(task.completionDate as string) : null} disabled={true} />
                                             </LocalizationProvider>
                                         </TableCell>
                                         <TableCell style={tableColumn4}>

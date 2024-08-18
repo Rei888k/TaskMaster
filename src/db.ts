@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3';
 import fs from 'fs'
 import { Task, UpdateTask } from './interface';
-import { app } from 'electron';
+// import { app } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { logger } from './logger';
 
@@ -14,8 +14,6 @@ CREATE TABLE IF NOT EXISTS task (
     limitDate TEXT,
     isCompleted INTEGER, -- bool値
     completionDate TEXT,
-    progressStatus INTEGER,
-    progressRate INTEGER,
     registerDate TEXT,
     updateDate TEXT
 );
@@ -49,7 +47,8 @@ CREATE TABLE IF NOT EXISTS tag (
 class Database {
     private db: sqlite3.Database | null = null;
     private initSqlPath = process.cwd()
-    private dbPath = (typeof process !== 'undefined' && process.versions && !!process.versions.electron) ? app.getPath('userData') : process.cwd()
+    // private dbPath = (typeof process !== 'undefined' && process.versions && !!process.versions.electron) ? app.getPath('userData') : process.cwd()
+    private dbPath = process.cwd()
     
     open(): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -215,8 +214,8 @@ export async function addTask(task: Task) {
     try {
         await db.open()
 
-        const lastID = await db.run('INSERT INTO task (title, memo, limitDate, isCompleted, completionDate, progressStatus, progressRate, registerDate, updateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [task.title, task.memo, task.limitDate, task.isCompleted, task.completionDate, task.progressStatus, task.progressRate, task.registerDate, task.updateDate])    
+        const lastID = await db.run('INSERT INTO task (title, memo, limitDate, isCompleted, completionDate, registerDate, updateDate) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [task.title, task.memo, task.limitDate, task.isCompleted, task.completionDate, task.registerDate, task.updateDate])    
         const insertedTask: Task = await db.get("SELECT * FROM task WHERE taskId = ?", [lastID]);
 
         logger.debug(insertedTask)
@@ -244,10 +243,8 @@ export async function updateTask(task: UpdateTask) {
         if (task.limitDate !== undefined) mainSql += 'limitDate = ?, '
         if (task.isCompleted !== undefined) mainSql += 'isCompleted = ?, '
         if (task.completionDate !== undefined) mainSql += 'completionDate = ?, '
-        if (task.progressStatus !== undefined) mainSql += 'progressStatus = ?, '
-        if (task.progressRate !== undefined) mainSql += 'progressRate = ?, '
 
-        const updateList = [task.title, task.memo, task.limitDate, task.isCompleted, task.completionDate, task.progressStatus, task.progressRate, task.updateDate, task.taskId].filter(item => item !== undefined)
+        const updateList = [task.title, task.memo, task.limitDate, task.isCompleted, task.completionDate, task.updateDate, task.taskId].filter(item => item !== undefined)
         await db.run(`${prefixSql}${mainSql}updateDate = ? WHERE taskId = ?`,
             updateList)
     } catch (error) {

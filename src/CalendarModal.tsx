@@ -13,6 +13,7 @@ Modal.setAppElement('#root');
 interface CalendarModalProps {
     id: number | null
     date: Date | null
+    disabled: boolean
 }
 
 const customStyles = {
@@ -27,7 +28,7 @@ const customStyles = {
 };
 
 function CalendarModal(props: CalendarModalProps) {
-    const { id, date } = props
+    const { id, date, disabled } = props
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [value, setValue] = useState<Date | null>(date);
 
@@ -55,7 +56,7 @@ function CalendarModal(props: CalendarModalProps) {
 
     return (
         <div>
-            <Button onMouseUp={openModal} >{date === null ? '期限なし' : date.toLocaleDateString()}</Button>
+            <Button onMouseUp={openModal} disabled={disabled} variant='contained'>{date === null ? '期限なし' : date.toLocaleDateString()}</Button>
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}

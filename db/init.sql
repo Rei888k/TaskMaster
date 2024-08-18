@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS task (
     limitDate TEXT,
     isCompleted INTEGER, -- bool値
     completionDate TEXT,
-    progressStatus INTEGER,
-    progressRate INTEGER,
+    -- progressStatus INTEGER,
+    -- progressRate INTEGER,
     registerDate TEXT,
     updateDate TEXT
 );

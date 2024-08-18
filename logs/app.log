@@ -1,6 +1,0 @@
-[2024-02-12T16:00:00.188] [INFO] default - initDatabase IN
-[2024-02-12T16:00:00.190] [INFO] default - db file path C:\work\typescript\TaskMaster
-[2024-02-12T16:00:00.196] [INFO] default - init.sql file path C:\work\typescript\TaskMaster
-[2024-02-12T16:00:00.218] [INFO] default - SQL script executed successfully.
-[2024-02-12T16:00:00.219] [DEBUG] default - []
-[2024-02-12T16:00:00.220] [INFO] default - initDatabase OUT

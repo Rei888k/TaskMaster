@@ -53,8 +53,6 @@ const buttonClickReducer = (state = initialState, action: { type: any; value: st
                         limitDate: action.updateTask.limitDate === undefined ? task.limitDate : action.updateTask.limitDate,
                         isCompleted: action.updateTask.isCompleted === undefined ? task.isCompleted : action.updateTask.isCompleted,
                         completionDate: action.updateTask.completionDate === undefined ? task.completionDate : action.updateTask.completionDate,
-                        progressStatus: action.updateTask.progressStatus === undefined ? task.progressStatus : action.updateTask.progressStatus,
-                        progressRate: action.updateTask.progressRate === undefined ? task.progressRate : action.updateTask.progressRate,
                         updateDate: action.updateTask.updateDate === undefined ? task.updateDate : action.updateTask.updateDate
                     } as Task
                 }
